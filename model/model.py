@@ -1,12 +1,15 @@
+import numpy as np
 import torch.nn as nn
 import torch
 from torch import Tensor
 
+from batch import Batch
 from constants import BOS_TOKEN, PAD_TOKEN, EOS_TOKEN, TARGET_PAD
 from encoder import Encoder
 from decoder import Decoder
 from model.embed import Embeddings
 from model.vocabulary import Vocabulary
+from search import greedy
 
 
 class Model(nn.Module):
@@ -101,3 +104,15 @@ class Model(nn.Module):
             noise = None
 
         return batch_loss, noise
+
+    def run_batch(self, batch: Batch, max_output_length : int,) ->(np.array, np.array):
+
+        encoder_output , encoder_hidden = self.encode(
+            batch.src, batch.src_lengths,
+            batch.src_mask
+        )
+
+        if max_output_length is None:
+            max_output_length = int(max(batch.src_lengths.cpu().numpy) * 1.5)\
+
+        stacked_output, stacked_attention_scores = greedy()

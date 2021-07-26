@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import pandas as pd
 
+import torch
 
 def skels(list_):
     point_list = []
@@ -47,16 +48,20 @@ if __name__ == "__main__":
 
     skel = pd.read_csv('../data/01April_2010_Thursday_heute-6694.csv')
     get_one_line = np.array(skel.iloc[28].tolist())
+    my_list = skels(get_one_line)
+    # for i in range(len(skel)):
+    #     img = np.zeros((210, 260, 3), np.uint8)
+    #
+    #     get_one_line = np.array(skel.iloc[i].tolist())
+    #     my_list = skels(get_one_line)
+    #     mydict = draw_point(my_list, 210, 260)
+    #     skel_connection(img, mydict)
+    #
+    #     cv2.imshow('image',img)
+    #     cv2.waitKey(0)
+    #
+    # cv2.destroyAllWindows()
 
-    for i in range(len(skel)):
-        img = np.zeros((210, 260, 3), np.uint8)
-
-        get_one_line = np.array(skel.iloc[i].tolist())
-        my_list = skels(get_one_line)
-        mydict = draw_point(my_list, 210, 260)
-        skel_connection(img, mydict)
-
-        cv2.imshow('image',img)
-        cv2.waitKey(0)
-
-    cv2.destroyAllWindows()
+    torch_list = np.array(my_list)
+    torch_list = torch.Tensor(torch_list)
+    print("shape: ", print(torch_list))
