@@ -14,6 +14,7 @@ from model.builders import build_optimizer,build_scheduler,build_gradient_clippe
 from constants import TARGET_PAD
 from loss import RegLoss
 from model.model import Model
+from prediction import validate_on_data
 from utils.helper import make_model_dir, make_logger, get_latest_checkpoint, symlink_update, load_checkpoint
 
 

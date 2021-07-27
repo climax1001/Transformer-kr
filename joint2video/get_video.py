@@ -1,8 +1,11 @@
+import os
+
 import cv2
 import numpy as np
 import pandas as pd
 
 import torch
+import torch.nn as nn
 
 def skels(list_):
     point_list = []
@@ -44,8 +47,22 @@ def skel_connection(img, dict_, color = (255,0,0)):
     for [x,y] in arm_connection:
         cv2.line(img, dict_[x], dict_[y], color, 1)
 
-if __name__ == "__main__":
+def _2D_frame(src_path, to_path = None):
+    filename = os.listdir(src_path)
+    del_list = [i for i in range(138)]
+    for seq, i in enumerate(del_list):
+        print(i)
+        if (i+1) % 3 == 0:
+            del_list.remove(i)
+    print(del_list)
+    for _,name in enumerate(filename):
+        skel = pd.read_csv(src_path + '/' + name)
+        skel = skel.drop(del_list, axis=1)
+        print(skel)
 
+    # print(len(skel))
+if __name__ == "__main__":
+    _2D_frame('../data/skel_dir_2')
     skel = pd.read_csv('../data/01April_2010_Thursday_heute-6694.csv')
     get_one_line = np.array(skel.iloc[28].tolist())
     my_list = skels(get_one_line)
@@ -61,7 +78,14 @@ if __name__ == "__main__":
     #     cv2.waitKey(0)
     #
     # cv2.destroyAllWindows()
+    l = []
+    for [i,j] in my_list:
+        l.append(i)
+        l.append(j)
 
+    # print(l)
     torch_list = np.array(my_list)
-    torch_list = torch.Tensor(torch_list)
-    print("shape: ", print(torch_list))
+    torch_list = torch.FloatTensor(torch_list)
+    # print("shape: ", print(torch_list))
+    emb = nn.Embedding(len(torch_list), 512)
+    # print(emb(torch_list))
