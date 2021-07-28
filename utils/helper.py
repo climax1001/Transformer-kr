@@ -2,11 +2,13 @@ import errno
 import glob
 import logging
 import shutil
+from random import random
 from typing import Optional
 
 import torch.nn as nn
 import numpy as np
 import torch
+import yaml
 from torch import Tensor
 
 import os
@@ -70,7 +72,7 @@ def make_model_dir(model_dir: str, overwrite=False, model_continue=False) -> str
         os.makedirs(model_dir)
     return model_dir
 
-def make_logger(model_dir: str, log_file: str = "train.log") -> Logger:
+def make_logger(model_dir: str, log_file: str = "train.log") -> logging.Logger:
     """
     Create a logger for logging the training process.
 
@@ -131,3 +133,18 @@ def load_checkpoint(path: str, use_cuda: bool = True) -> dict:
     assert os.path.isfile(path), "Checkpoint %s not found" % path
     checkpoint = torch.load(path, map_location='cuda' if use_cuda else 'cpu')
     return checkpoint
+
+def load_config(path="configs/default.yaml") -> dict:
+    with open(path, 'r') as ymlfile:
+        cfg = yaml.safe_load(ymlfile)
+    return cfg
+
+def set_seed(seed: int) -> None:
+    """
+    Set the random seed for modules torch, numpy and random.
+
+    :param seed: random seed
+    """
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    random.seed(seed)

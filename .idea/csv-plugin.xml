@@ -129,6 +129,27 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/data/skel_dir_2/01April_2011_Friday_tagesschau-3380.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/skel_dir_2/01April_2011_Friday_tagesschau-3382.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/skel_dir_2/01April_2011_Friday_tagesschau-3384.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/data/skel_dir_2/01December_2011_Thursday_heute-3063.csv">
           <value>
             <Attribute>

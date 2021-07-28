@@ -3,9 +3,9 @@ data:
     trg: "skels"    # Target - 3D body co-ordinates (skels)
     files: "files"    # Filenames for each sequence
 
-    train: "./Data/tmp/train"
-    dev: "./Data/tmp/dev"
-    test: "./Data/tmp/test"
+    train: "./data/tmp/train"
+    dev: "./data/tmp/dev"
+    test: "./data/tmp/test"
 
     max_sent_length: 300 # Max Sentence Length
     skip_frames: 1   # Skip frames in the data, to reduce the data input size

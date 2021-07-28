@@ -12,6 +12,9 @@ from model.vocabulary import Vocabulary, build_vocab
 import torch
 import torch.nn as nn
 
+from utils.helper import load_config
+
+
 def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
                                   Vocabulary, Vocabulary):
     """
@@ -220,3 +223,21 @@ class SignProdDataset(data.Dataset):
                         [src_line, trg_frames, files_line], fields))
 
         super(SignProdDataset, self).__init__(examples, fields, **kwargs)
+
+
+
+if __name__ == '__main__':
+    cfg = load_config('Configs/Base.yaml')
+    set_see
+    train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)
+    print(train_data)
+    # train_data = SignProdDataset(path=train_path,
+    #                                 exts=("." + src_lang, "." + trg_lang, "." + files_lang),
+    #                                 fields=(src_field, reg_trg_field, files_field),
+    #                                 trg_size=trg_size,
+    #                                 skip_frames=skip_frames,
+    #                                 filter_pred=
+    #                                 lambda x: len(vars(x)['src'])
+    #                                 <= max_sent_length
+    #                                 and len(vars(x)['trg'])
+    #                                 <= max_sent_length)

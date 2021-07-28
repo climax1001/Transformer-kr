@@ -1,21 +1,25 @@
+import argparse
 import os
 import queue
+import shutil
 from datetime import time
 
 import torch
 import numpy as np
 from anykeystore.exceptions import ConfigurationError
+from torch import Tensor
 from torch.utils.tensorboard import SummaryWriter
 from torchtext.data import Dataset
 
 from batch import Batch
-from data import make_data_iter
+from data import make_data_iter, load_data
 from model.builders import build_optimizer,build_scheduler,build_gradient_clipper
 from constants import TARGET_PAD
 from loss import RegLoss
-from model.model import Model
+from model.model import Model, build_model
 from prediction import validate_on_data
-from utils.helper import make_model_dir, make_logger, get_latest_checkpoint, symlink_update, load_checkpoint
+from utils.helper import make_model_dir, make_logger, get_latest_checkpoint, symlink_update, load_checkpoint, \
+    load_config, set_seed
 
 
 class TrainManager:
@@ -430,13 +434,13 @@ class TrainManager:
                 sequence_ID = None
 
             # Plot this sequences video
-            if "<" not in video_ext:
-                plot_video(joints=timing_hyp_seq,
-                           file_path=dir_name,
-                           video_name=video_ext,
-                           references=ref_seq_count,
-                           skip_frames=self.skip_frames,
-                           sequence_ID=sequence_ID)
+            # if "<" not in video_ext:
+            #     plot_video(joints=timing_hyp_seq,
+            #                file_path=dir_name,
+            #                video_name=video_ext,
+            #                references=ref_seq_count,
+            #                skip_frames=self.skip_frames,
+            #                sequence_ID=sequence_ID)
 
         # Train the batch
 
