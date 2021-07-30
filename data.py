@@ -12,7 +12,7 @@ from model.vocabulary import Vocabulary, build_vocab
 import torch
 import torch.nn as nn
 
-from utils.helper import load_config
+from utils.helper import load_config, set_seed
 
 
 def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
@@ -228,8 +228,11 @@ class SignProdDataset(data.Dataset):
 
 if __name__ == '__main__':
     cfg = load_config('Configs/Base.yaml')
-    set_see
+    set_seed()
     train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)
+
+    data_to_predict =
+
     print(train_data)
     # train_data = SignProdDataset(path=train_path,
     #                                 exts=("." + src_lang, "." + trg_lang, "." + files_lang),

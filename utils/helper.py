@@ -4,7 +4,7 @@ import logging
 import shutil
 from random import random
 from typing import Optional
-
+from logging import Logger
 import torch.nn as nn
 import numpy as np
 import torch
@@ -148,3 +148,19 @@ def set_seed(seed: int) -> None:
     torch.manual_seed(seed)
     np.random.seed(seed)
     random.seed(seed)
+
+def log_cfg(cfg: dict, logger: Logger, prefix: str = "cfg") -> None:
+    """
+    Write configuration to log.
+
+    :param cfg: configuration to log
+    :param logger: logger that defines where log is written to
+    :param prefix: prefix for logging
+    """
+    for k, v in cfg.items():
+        if isinstance(v, dict):
+            p = '.'.join([prefix, k])
+            log_cfg(v, logger, prefix=p)
+        else:
+            p = '.'.join([prefix, k])
+            logger.info("{:34s} : {}".format(p, v))

@@ -1,4 +1,4 @@
-f = open('../data/tmp/phoenix2014T.train.de', 'r')
+f = open('../data/tmp/train.text', 'r')
 while True:
 
         text = f.readline()

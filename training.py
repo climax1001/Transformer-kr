@@ -19,7 +19,7 @@ from loss import RegLoss
 from model.model import Model, build_model
 from prediction import validate_on_data
 from utils.helper import make_model_dir, make_logger, get_latest_checkpoint, symlink_update, load_checkpoint, \
-    load_config, set_seed
+    load_config, set_seed, log_cfg
 
 
 class TrainManager:
@@ -514,116 +514,116 @@ class TrainManager:
         self.logger.info("Trainable parameters: %s", sorted(trainable_params))
         assert trainable_params
 
-    def train(cfg_file: str, ckpt=None) -> None:
+def train(cfg_file: str, ckpt=None) -> None:
 
-        # Load the config file
-        cfg = load_config(cfg_file)
+    # Load the config file
+    cfg = load_config(cfg_file)
 
-        # Set the random seed
-        set_seed(seed=cfg["training"].get("random_seed", 42))
+    # Set the random seed
+    set_seed(seed=cfg["training"].get("random_seed", 42))
 
-        # Load the data - Trg as (batch, # of frames, joints + 1 )
-        train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)
+    # Load the data - Trg as (batch, # of frames, joints + 1 )
+    train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)
 
-        # Build the Progressive Transformer model
-        model = build_model(cfg, src_vocab=src_vocab, trg_vocab=trg_vocab)
+    # Build the Progressive Transformer model
+    model = build_model(cfg, src_vocab=src_vocab, trg_vocab=trg_vocab)
 
-        if ckpt is not None:
-            use_cuda = cfg["training"].get("use_cuda", False)
-            model_checkpoint = load_checkpoint(ckpt, use_cuda=use_cuda)
-            # Build model and load parameters from the checkpoint
-            model.load_state_dict(model_checkpoint["model_state"])
+    if ckpt is not None:
+        use_cuda = cfg["training"].get("use_cuda", False)
+        model_checkpoint = load_checkpoint(ckpt, use_cuda=use_cuda)
+        # Build model and load parameters from the checkpoint
+        model.load_state_dict(model_checkpoint["model_state"])
 
-        # for training management, e.g. early stopping and model selection
-        trainer = TrainManager(model=model, config=cfg)
+    # for training management, e.g. early stopping and model selection
+    trainer = TrainManager(model=model, config=cfg)
 
-        # Store copy of original training config in model dir
-        shutil.copy2(cfg_file, trainer.model_dir + "/config.yaml")
-        # Log all entries of config
-        log_cfg(cfg, trainer.logger)
+    # Store copy of original training config in model dir
+    shutil.copy2(cfg_file, trainer.model_dir + "/config.yaml")
+    # Log all entries of config
+    log_cfg(cfg, trainer.logger)
 
-        # Train the model
-        trainer.train_and_validate(train_data=train_data, valid_data=dev_data)
+    # Train the model
+    trainer.train_and_validate(train_data=train_data, valid_data=dev_data)
 
-        # Test the model with the best checkpoint
-        test(cfg_file)
+    # Test the model with the best checkpoint
+    test(cfg_file)
 
     # pylint: disable-msg=logging-too-many-args
-    def test(cfg_file,
-             ckpt: str) -> None:
+def test(cfg_file,
+         ckpt: str) -> None:
 
-        # Load the config file
-        cfg = load_config(cfg_file)
+    # Load the config file
+    cfg = load_config(cfg_file)
 
-        # Load the model directory and checkpoint
-        model_dir = cfg["training"]["model_dir"]
-        # when checkpoint is not specified, take latest (best) from model dir
+    # Load the model directory and checkpoint
+    model_dir = cfg["training"]["model_dir"]
+    # when checkpoint is not specified, take latest (best) from model dir
+    if ckpt is None:
+        ckpt = get_latest_checkpoint(model_dir, post_fix="_best")
         if ckpt is None:
-            ckpt = get_latest_checkpoint(model_dir, post_fix="_best")
-            if ckpt is None:
-                raise FileNotFoundError("No checkpoint found in directory {}."
-                                        .format(model_dir))
+            raise FileNotFoundError("No checkpoint found in directory {}."
+                                    .format(model_dir))
 
-        batch_size = cfg["training"].get("eval_batch_size", cfg["training"]["batch_size"])
-        batch_type = cfg["training"].get("eval_batch_type", cfg["training"].get("batch_type", "sentence"))
-        use_cuda = cfg["training"].get("use_cuda", False)
-        eval_metric = cfg["training"]["eval_metric"]
-        max_output_length = cfg["training"].get("max_output_length", None)
+    batch_size = cfg["training"].get("eval_batch_size", cfg["training"]["batch_size"])
+    batch_type = cfg["training"].get("eval_batch_type", cfg["training"].get("batch_type", "sentence"))
+    use_cuda = cfg["training"].get("use_cuda", False)
+    eval_metric = cfg["training"]["eval_metric"]
+    max_output_length = cfg["training"].get("max_output_length", None)
 
-        # load the data
-        train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)
+    # load the data
+    train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)
 
-        # To produce testing results
-        data_to_predict = {"test": test_data}
-        # To produce validation results
-        # data_to_predict = {"dev": dev_data}
+    # To produce testing results
+    data_to_predict = {"test": test_data}
+    # To produce validation results
+    # data_to_predict = {"dev": dev_data}
 
-        # Load model state from disk
-        model_checkpoint = load_checkpoint(ckpt, use_cuda=use_cuda)
+    # Load model state from disk
+    model_checkpoint = load_checkpoint(ckpt, use_cuda=use_cuda)
 
-        # Build model and load parameters into it
-        model = build_model(cfg, src_vocab=src_vocab, trg_vocab=trg_vocab)
-        model.load_state_dict(model_checkpoint["model_state"])
-        # If cuda, set model as cuda
-        if use_cuda:
-            model.cuda()
+    # Build model and load parameters into it
+    model = build_model(cfg, src_vocab=src_vocab, trg_vocab=trg_vocab)
+    model.load_state_dict(model_checkpoint["model_state"])
+    # If cuda, set model as cuda
+    if use_cuda:
+        model.cuda()
 
-        # Set up trainer to produce videos
-        trainer = TrainManager(model=model, config=cfg, test=True)
+    # Set up trainer to produce videos
+    trainer = TrainManager(model=model, config=cfg, test=True)
 
-        # For each of the required data, produce results
-        for data_set_name, data_set in data_to_predict.items():
-            # Validate for this data set
-            score, loss, references, hypotheses, \
-            inputs, all_dtw_scores, file_paths = \
-                validate_on_data(
-                    model=model,
-                    data=data_set,
-                    batch_size=batch_size,
-                    max_output_length=max_output_length,
-                    eval_metric=eval_metric,
-                    loss_function=None,
-                    batch_type=batch_type,
-                    type="val" if not data_set_name is "train" else "train_inf"
-                )
-
-            # Set which sequences to produce video for
-            display = list(range(len(hypotheses)))
-
-            # Produce videos for the produced hypotheses
-            trainer.produce_validation_video(
-                output_joints=hypotheses,
-                inputs=inputs,
-                references=references,
-                model_dir=model_dir,
-                display=display,
-                type="test",
-                file_paths=file_paths,
+    # For each of the required data, produce results
+    for data_set_name, data_set in data_to_predict.items():
+        # Validate for this data set
+        score, loss, references, hypotheses, \
+        inputs, all_dtw_scores, file_paths = \
+            validate_on_data(
+                model=model,
+                data=data_set,
+                batch_size=batch_size,
+                max_output_length=max_output_length,
+                eval_metric=eval_metric,
+                loss_function=None,
+                batch_type=batch_type,
+                type="val" if not data_set_name is "train" else "train_inf"
             )
 
-    if __name__ == "__main__":
-        parser = argparse.ArgumentParser("Progressive Transformers")
-        parser.add_argument("config", default="configs/default.yaml", type=str,
-                            help="Training configuration file (yaml).")
-        args = parser.parse_args()
-        train(cfg_file=args.config)
+        # Set which sequences to produce video for
+        display = list(range(len(hypotheses)))
+
+        # Produce videos for the produced hypotheses
+        trainer.produce_validation_video(
+            output_joints=hypotheses,
+            inputs=inputs,
+            references=references,
+            model_dir=model_dir,
+            display=display,
+            type="test",
+            file_paths=file_paths,
+        )
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser("Progressive Transformers")
+    parser.add_argument("config", default="configs/default.yaml", type=str,
+                        help="Training configuration file (yaml).")
+    args = parser.parse_args()
+    train(cfg_file=args.config)

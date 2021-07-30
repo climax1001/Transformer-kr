@@ -66,26 +66,26 @@ if __name__ == "__main__":
     skel = pd.read_csv('../data/01April_2010_Thursday_heute-6694.csv')
     get_one_line = np.array(skel.iloc[28].tolist())
     my_list = skels(get_one_line)
-    # for i in range(len(skel)):
-    #     img = np.zeros((210, 260, 3), np.uint8)
-    #
-    #     get_one_line = np.array(skel.iloc[i].tolist())
-    #     my_list = skels(get_one_line)
-    #     mydict = draw_point(my_list, 210, 260)
-    #     skel_connection(img, mydict)
-    #
-    #     cv2.imshow('image',img)
-    #     cv2.waitKey(0)
-    #
-    # cv2.destroyAllWindows()
-    l = []
-    for [i,j] in my_list:
-        l.append(i)
-        l.append(j)
+    for i in range(len(skel)):
+        img = np.zeros((210, 260, 3), np.uint8)
 
-    # print(l)
-    torch_list = np.array(my_list)
-    torch_list = torch.FloatTensor(torch_list)
-    # print("shape: ", print(torch_list))
-    emb = nn.Embedding(len(torch_list), 512)
-    # print(emb(torch_list))
+        get_one_line = np.array(skel.iloc[i].tolist())
+        my_list = skels(get_one_line)
+        mydict = draw_point(my_list, 210, 260)
+        skel_connection(img, mydict)
+
+        cv2.imshow('image',img)
+        cv2.waitKey(0)
+
+    cv2.destroyAllWindows()
+    # l = []
+    # for [i,j] in my_list:
+    #     l.append(i)
+    #     l.append(j)
+    #
+    # # print(l)
+    # torch_list = np.array(my_list)
+    # torch_list = torch.FloatTensor(torch_list)
+    # # print("shape: ", print(torch_list))
+    # emb = nn.Embedding(len(torch_list), 512)
+    # # print(emb(torch_list))
