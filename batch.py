@@ -1,6 +1,6 @@
 from constants import TARGET_PAD
 import torch
-import torch.functional as F
+import torch.nn.functional as F
 
 class Batch:
     def __init__(self, torch_batch, pad_index, model):
@@ -64,3 +64,16 @@ class Batch:
         if self.use_cuda:
             self._make_cuda()
 
+    def _make_cuda(self):
+        """
+        Move the batch to GPU
+
+        :return:
+        """
+        self.src = self.src.cuda()
+        self.src_mask = self.src_mask.cuda()
+
+        if self.trg_input is not None:
+            self.trg_input = self.trg_input.cuda()
+            self.trg = self.trg.cuda()
+            self.trg_mask = self.trg_mask.cuda()

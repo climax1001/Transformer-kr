@@ -67,6 +67,9 @@ def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
     files_field = data.RawField()
 
     def tokenize_features(features):
+
+        # print(len(features))
+
         features = torch.as_tensor(features)
         ft_list = torch.split(features, 1, dim=0)
         return [ft.squeeze() for ft in ft_list]
@@ -226,21 +229,3 @@ class SignProdDataset(data.Dataset):
 
 
 
-if __name__ == '__main__':
-    cfg = load_config('Configs/Base.yaml')
-    set_seed()
-    train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)
-
-    data_to_predict =
-
-    print(train_data)
-    # train_data = SignProdDataset(path=train_path,
-    #                                 exts=("." + src_lang, "." + trg_lang, "." + files_lang),
-    #                                 fields=(src_field, reg_trg_field, files_field),
-    #                                 trg_size=trg_size,
-    #                                 skip_frames=skip_frames,
-    #                                 filter_pred=
-    #                                 lambda x: len(vars(x)['src'])
-    #                                 <= max_sent_length
-    #                                 and len(vars(x)['trg'])
-    #                                 <= max_sent_length)

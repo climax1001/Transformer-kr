@@ -2,7 +2,7 @@ import copy
 
 import torch
 import torch.nn as nn
-from embed import PositionalEncoding
+from model.embed import PositionalEncoding
 from model.layers import TransformerEncoderLayer
 from model.sublayer import Norm
 from utils.helper import freeze_params

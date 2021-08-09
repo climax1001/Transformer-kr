@@ -5,8 +5,9 @@ from torch import Tensor
 
 from batch import Batch
 from constants import BOS_TOKEN, PAD_TOKEN, EOS_TOKEN, TARGET_PAD
-from encoder import Encoder, TransformerEncoder
-from decoder import Decoder, TransformerDecoder
+from initialization import initialize_model
+from model.encoder import Encoder, TransformerEncoder
+from model.decoder import Decoder, TransformerDecoder
 from model.embed import Embeddings
 from model.vocabulary import Vocabulary
 from search import greedy
@@ -58,19 +59,57 @@ class Model(nn.Module):
         self.future_prediction = model_cfg.get("future_prediction",0)
 
     def forward(self,
-                src : Tensor,
-                trg_input : Tensor,
-                src_mask : Tensor,
-                src_lengths : Tensor,
-                trg_mask : Tensor = None,
-                src_input : Tensor = None) ->(Tensor, Tensor, Tensor, Tensor):
-        encoder_output, encoder_hidden = self.encode(src = src, src_length = src_lengths, src_mask = src_mask)
+                src: Tensor,
+                trg_input: Tensor,
+                src_mask: Tensor,
+                src_lengths: Tensor,
+                trg_mask: Tensor = None,
+                src_input: Tensor = None) -> (
+            Tensor, Tensor, Tensor, Tensor):
+        """
+        First encodes the source sentence.
+        Then produces the target one word at a time.
 
+        :param src: source input
+        :param trg_input: target input
+        :param src_mask: source mask
+        :param src_lengths: length of source inputs
+        :param trg_mask: target mask
+        :return: decoder outputs
+        """
+
+        # Encode the source sequence
+        encoder_output, encoder_hidden = self.encode(src=src,
+                                                     src_length=src_lengths,
+                                                     src_mask=src_mask)
         unroll_steps = trg_input.size(1)
 
+        # Add gaussian noise to the target inputs, if in training
         if (self.gaussian_noise) and (self.training) and (self.out_stds is not None):
 
-            noise = trg_input.data.new(trg_input.size()).normal_(0,1)
+            # Create a normal distribution of random numbers between 0-1
+            noise = trg_input.data.new(trg_input.size()).normal_(0, 1)
+            # Zero out the noise over the counter
+            noise[:, :, -1] = torch.zeros_like(noise[:, :, -1])
+
+            # Need to add a zero on the end of
+            if self.future_prediction != 0:
+                self.out_stds = torch.cat((self.out_stds, torch.zeros_like(self.out_stds)))[:trg_input.shape[-1]]
+
+            # Need to multiply by the standard deviations
+            noise = noise * self.out_stds
+
+            # Add to trg_input multiplied by the noise rate
+            trg_input = trg_input + self.noise_rate * noise
+
+        # Decode the target sequence
+        skel_out, dec_hidden, _, _ = self.decode(encoder_output=encoder_output,
+                                                 src_mask=src_mask, trg_input=trg_input,
+                                                 trg_mask=trg_mask)
+
+        gloss_out = None
+
+        return skel_out, gloss_out
 
     def encode(self, src: Tensor, src_length : Tensor, src_mask : Tensor) -> (Tensor, Tensor):
 
@@ -85,11 +124,12 @@ class Model(nn.Module):
                                       trg_mask=trg_mask)
         return decoder_output
 
-    def get_loss_for_batch(self, batch: Batch, loss_function : nn.Module) ->Tensor:
+    def get_loss_for_batch(self, batch: Batch, loss_function : nn.Module) -> Tensor:
 
         skel_out , _ = self.forward(
             src=batch.src, trg_input = batch.trg_input,
-            src_mask = batch.src_mask, src_lengths=batch.src_lenghts
+            src_mask = batch.src_mask, src_lengths=batch.src_lengths,
+            trg_mask = batch.trg_mask
         )
         batch_loss = loss_function(skel_out, batch.trg)
 
@@ -115,7 +155,29 @@ class Model(nn.Module):
         if max_output_length is None:
             max_output_length = int(max(batch.src_lengths.cpu().numpy) * 1.5)\
 
-        stacked_output, stacked_attention_scores = greedy()
+        stacked_output, stacked_attention_scores = greedy(
+            encoder_output=encoder_output,
+            src_mask=batch.src_mask,
+            embed=self.trg_embed,
+            decoder=self.decoder,
+            trg_input=batch.trg_input,
+            model=self)
+
+        return stacked_output, stacked_attention_scores
+
+    def __repr__(self) -> str:
+        """
+        String representation: a description of encoder, decoder and embeddings
+
+        :return: string representation
+        """
+        return "%s(\n" \
+               "\tencoder=%s,\n" \
+               "\tdecoder=%s,\n" \
+               "\tsrc_embed=%s,\n" \
+               "\ttrg_embed=%s)" % (self.__class__.__name__, self.encoder,
+                                    self.decoder, self.src_embed, self.trg_embed)
+
 
 def build_model(cfg: dict = None,
                 src_vocab: Vocabulary = None,

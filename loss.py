@@ -14,7 +14,6 @@ class RegLoss(nn.Module):
             self.criterion = nn.L1Loss()
         elif self.loss == "mse":
             self.criterion = nn.MSELoss()
-
         else:
             print("Loss not found - revert to default L1 loss")
             self.criterion = nn.L1Loss()

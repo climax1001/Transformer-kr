@@ -9,14 +9,15 @@ import numpy as np
 from anykeystore.exceptions import ConfigurationError
 from torch import Tensor
 from torch.utils.tensorboard import SummaryWriter
-from torchtext.data import Dataset
-
+from torchtext.legacy.data import Dataset
+import time
 from batch import Batch
 from data import make_data_iter, load_data
 from model.builders import build_optimizer,build_scheduler,build_gradient_clipper
 from constants import TARGET_PAD
 from loss import RegLoss
 from model.model import Model, build_model
+from plot_video import alter_DTW_timing
 from prediction import validate_on_data
 from utils.helper import make_model_dir, make_logger, get_latest_checkpoint, symlink_update, load_checkpoint, \
     load_config, set_seed, log_cfg
@@ -41,7 +42,7 @@ class TrainManager:
                                         model_continue = model_continue)
         self.logger = make_logger(model_dir=self.model_dir)
         self.logging_freq = train_config.get("logging_freq", 100)
-        self.valid_repor_file = "{}/validations.txt".format(self.model_dir)
+        self.valid_report_file = "{}/validations.txt".format(self.model_dir)
         self.tb_writer = SummaryWriter(log_dir=self.model_dir+"/tensorboard/")
 
         self.model = model
@@ -60,7 +61,7 @@ class TrainManager:
         self.optimizer = build_optimizer(config=train_config, parameters = model.parameters())
 
         self.validation_freq = train_config.get("validatiob_freq",1000)
-        self.ckpt_best_queue = queue.Queue(maxsize=train_config.fet("keep_last_ckpts",1))
+        self.ckpt_best_queue = queue.Queue(maxsize=train_config.get("keep_last_ckpts",1))
         self.ckpt_queue = queue.Queue(maxsize=1)
 
         self.val_on_train = config["data"].get("val_on_train", False)
@@ -78,7 +79,7 @@ class TrainManager:
             raise ConfigurationError("Invalid setting for 'early_stopping_metric', "
                                     "valid options: 'loss', 'dtw',.")
 
-        self.schedular, self.scheduler_step_at = build_scheduler(
+        self.scheduler, self.scheduler_step_at = build_scheduler(
             config=train_config,
             scheduler_mode = "min" if self.minimize_metric else "max",
             optimizer=self.optimizer,
@@ -544,7 +545,7 @@ def train(cfg_file: str, ckpt=None) -> None:
 
     # Train the model
     trainer.train_and_validate(train_data=train_data, valid_data=dev_data)
-
+    print('check')
     # Test the model with the best checkpoint
     test(cfg_file)
 
