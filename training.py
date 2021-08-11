@@ -245,7 +245,6 @@ class TrainManager:
             start_tokens = self.total_tokens
             count = self.batch_multiplier - 1
             epoch_loss = 0
-
             # If Gaussian Noise, extract STDs for each joint position
             if self.gaussian_noise:
                 if len(all_epoch_noise) != 0:

@@ -28,7 +28,6 @@ class Batch:
             # trg_input is used for teacher forcing, last one is cut off
             # Remove the last frame for target input, as inputs are only up to frame N-1
             self.trg_input = trg.clone()[:, :-1, :]
-
             self.trg_lengths = trg_lengths
             # trg is used for loss computation, shifted by one since BOS
             self.trg = trg.clone()[:, 1:, :]
@@ -59,6 +58,8 @@ class Batch:
             pad_amount = self.trg_input.shape[1] - self.trg_input.shape[2]
             # Create the target mask the same size as target input
             self.trg_mask = (F.pad(input=trg_mask.double(), pad=(pad_amount, 0, 0, 0), mode='replicate') == 1.0)
+            # print("trg_mask :" , self.trg_mask)
+
             self.ntokens = (self.trg != pad_index).data.sum().item()
 
         if self.use_cuda:

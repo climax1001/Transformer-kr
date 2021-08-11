@@ -131,8 +131,11 @@ class Model(nn.Module):
             src_mask = batch.src_mask, src_lengths=batch.src_lengths,
             trg_mask = batch.trg_mask
         )
-        batch_loss = loss_function(skel_out, batch.trg)
-
+        # print(batch.trg)
+        # print('skel_out', skel_out)
+        # print('batchtrg', batch.trg)
+        batch_loss = loss_function(skel_out, batch.trg) # RSE Function
+        # print('batch_loss :', batch_loss)
         if self.gaussian_noise:
             with torch.no_grad():
                 noise = skel_out.detach() - batch.trg.detach()

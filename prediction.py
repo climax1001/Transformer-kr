@@ -49,13 +49,16 @@ def validate_on_data(model: Model,
                           model = model)
             targets = batch.trg
 
+            # print('batch_trg :', targets )
             # run as during training with teacher forcing
             if loss_function is not None and batch.trg is not None:
                 # Get the loss for this batch
                 batch_loss, _ = model.get_loss_for_batch(
                     batch, loss_function=loss_function)
 
+                # print('loss_f : ', loss_function)
                 valid_loss += batch_loss
+                print('valid_loss :', valid_loss)
                 total_ntokens += batch.ntokens
                 total_nseqs += batch.nseqs
 
@@ -96,6 +99,6 @@ def validate_on_data(model: Model,
 
         # Dynamic Time Warping scores
         current_valid_score = np.mean(all_dtw_scores)
-
+        print("1", current_valid_score, "2", valid_loss,"3",  valid_references,"4",  valid_hypotheses,"5",  valid_inputs,"6",  all_dtw_scores,"7",  file_paths)
     return current_valid_score, valid_loss, valid_references, valid_hypotheses, \
            valid_inputs, all_dtw_scores, file_paths
