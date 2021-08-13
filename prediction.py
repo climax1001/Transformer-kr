@@ -58,7 +58,7 @@ def validate_on_data(model: Model,
 
                 # print('loss_f : ', loss_function)
                 valid_loss += batch_loss
-                print('valid_loss :', valid_loss)
+                # print('valid_loss :', valid_loss)
                 total_ntokens += batch.ntokens
                 total_nseqs += batch.nseqs
 
@@ -69,10 +69,13 @@ def validate_on_data(model: Model,
                                             batch=batch,
                                             max_output_length=max_output_length)
 
+                # print(output)
+            print("fp :", model.future_prediction)
             # If future prediction
             if model.future_prediction != 0:
                 # Cut to only the first frame prediction + add the counter
                 train_output = torch.cat((train_output[:, :, :train_output.shape[2] // (model.future_prediction)], train_output[:, :, -1:]),dim=2)
+                # print(train_output[:, :, :train_output.shape[2] // (model.future_prediction)], train_output[:, :, -1:])
                 # Cut to only the first frame prediction + add the counter
                 targets = torch.cat((targets[:, :, :targets.shape[2] // (model.future_prediction)], targets[:, :, -1:]),dim=2)
 
@@ -80,6 +83,8 @@ def validate_on_data(model: Model,
             if model.just_count_in:
                 output = train_output
 
+            # print(output)
+            # print(targets)
             # Add references, hypotheses and file paths to list
             valid_references.extend(targets)
             valid_hypotheses.extend(output)
@@ -99,6 +104,7 @@ def validate_on_data(model: Model,
 
         # Dynamic Time Warping scores
         current_valid_score = np.mean(all_dtw_scores)
-        print("1", current_valid_score, "2", valid_loss,"3",  valid_references,"4",  valid_hypotheses[0].shape,"5",  valid_inputs,"6",  all_dtw_scores,"7",  file_paths)
+        # print("1", current_valid_score, "2", valid_loss,"3",  valid_references,"4",  valid_hypotheses[0].shape,"5",  valid_inputs,"6",  all_dtw_scores,"7",  file_paths)
+        # print("valid_hypo : ", valid_hypotheses)
     return current_valid_score, valid_loss, valid_references, valid_hypotheses, \
            valid_inputs, all_dtw_scores, file_paths
