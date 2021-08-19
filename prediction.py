@@ -70,7 +70,7 @@ def validate_on_data(model: Model,
                                             max_output_length=max_output_length)
 
                 # print(output)
-            print("fp :", model.future_prediction)
+            # print("fp :", model.future_prediction)
             # If future prediction
             if model.future_prediction != 0:
                 # Cut to only the first frame prediction + add the counter
@@ -104,7 +104,8 @@ def validate_on_data(model: Model,
 
         # Dynamic Time Warping scores
         current_valid_score = np.mean(all_dtw_scores)
-        # print("1", current_valid_score, "2", valid_loss,"3",  valid_references,"4",  valid_hypotheses[0].shape,"5",  valid_inputs,"6",  all_dtw_scores,"7",  file_paths)
+        # print("1","\n",current_valid_score, "2","\n",valid_loss,"3","\n",valid_references,"4","\n",  valid_hypotheses,"5","\n",  valid_inputs,"6","\n",
+        #       all_dtw_scores,"7","\n",file_paths)
         # print("valid_hypo : ", valid_hypotheses)
     return current_valid_score, valid_loss, valid_references, valid_hypotheses, \
            valid_inputs, all_dtw_scores, file_paths

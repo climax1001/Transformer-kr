@@ -18,7 +18,7 @@ training:
     learning_rate_min: 0.00001 # Learning rate minimum, when training will stop
     weight_decay: 0.0   # Weight Decay
     clip_grad_norm: 5.0   # Gradient clipping value
-    batch_size: 8    # Batch Size for training
+    batch_size: 25    # Batch Size for training
     scheduling: "plateau"   # Scheduling at training time (plateau, ...)
     patience: 7  # How many epochs of no improvement causes a LR reduction
     decrease_factor: 0.7  # LR reduction factor, after the # of patience epochs
@@ -47,7 +47,7 @@ model:
     future_prediction: 0 # Future Prediction Data Augmentation if > 0
     encoder:  # Model Encoder
         type: "transformer"
-        num_layers: 2 # Number of layers
+        num_layers: 6 # Number of layers
         num_heads: 4  # Number of Heads
         embeddings:
             embedding_dim: 512  # Embedding Dimension
@@ -57,7 +57,7 @@ model:
         dropout: 0 # Encoder Dropout
     decoder: # Model Decoder
         type: "transformer"
-        num_layers: 2 # Number of layers
+        num_layers: 6 # Number of layers
         num_heads: 4 # Number of Heads
         embeddings:
             embedding_dim: 512 # Embedding Dimension

@@ -17,7 +17,7 @@ from model.builders import build_optimizer,build_scheduler,build_gradient_clippe
 from constants import TARGET_PAD
 from loss import RegLoss
 from model.model import Model, build_model
-from plot_video import alter_DTW_timing
+from plot_video import alter_DTW_timing, plot_video
 from prediction import validate_on_data
 from utils.helper import make_model_dir, make_logger, get_latest_checkpoint, symlink_update, load_checkpoint, \
     load_config, set_seed, log_cfg
@@ -434,13 +434,13 @@ class TrainManager:
                 sequence_ID = None
 
             # Plot this sequences video
-            # if "<" not in video_ext:
-            #     plot_video(joints=timing_hyp_seq,
-            #                file_path=dir_name,
-            #                video_name=video_ext,
-            #                references=ref_seq_count,
-            #                skip_frames=self.skip_frames,
-            #                sequence_ID=sequence_ID)
+            if "<" not in video_ext:
+                plot_video(joints=timing_hyp_seq,
+                           file_path=dir_name,
+                           video_name=video_ext,
+                           references=ref_seq_count,
+                           skip_frames=self.skip_frames,
+                           sequence_ID=sequence_ID)
 
         # Train the batch
 
