@@ -18,7 +18,7 @@ def plot_video(joints,
                skip_frames=1,
                sequence_ID=None):
     # Create video template
-    FPS = (25 // skip_frames)
+    FPS = (25 // skip_frames) # 25
     video_file = file_path + "/{}.mp4".format(video_name.split(".")[0])
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 

@@ -49,23 +49,36 @@ def _2D_frame(filename):
 
     return skel_data
 
+def show_video(skel,
+               file_path,
+               video_name,
+               skip_frames = 1):
+
+    # 비디오 파일 저장
+    FPS = (25 // skip_frames)
+    video_file = file_path + "/{}.mp4".format(video_name.split(".")[0])
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+
+    video = cv2.VideoWriter(video_file, fourcc, FPS, (260, 210))
 
     # print(len(skel))
-if __name__ == "__main__":
-    # 파일 경로를 넣으면 골격을 뽑아준다.
-    skel = _2D_frame('../data/01April_2010_Thursday_heute-6694.csv')
     for i in range(len(skel)):
         img = np.zeros((210, 260, 3), np.uint8)
         get_one_line = np.array(skel.iloc[i].tolist())
         my_list = skels(get_one_line)
         print(len(my_list))
+
         mydict = draw_point(my_list, 210, 260)
         skel_connection(img, mydict)
-
         cv2.imshow('image',img)
+        video.write(img)
         cv2.waitKey(0)
 
     cv2.destroyAllWindows()
+if __name__ == "__main__":
+    # 파일 경로를 넣으면 골격을 뽑아준다.
+    show_video('../data/01April_2010_Thursday_heute-6694.csv')
+
     # l = []
     # for [i,j] in my_list:
     #     l.append(i)
