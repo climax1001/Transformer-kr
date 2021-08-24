@@ -434,6 +434,7 @@ class TrainManager:
                 sequence_ID = None
 
             # Plot this sequences video
+            print(timing_hyp_seq.shape)
             if "<" not in video_ext:
                 show_video(skel=timing_hyp_seq,
                            file_path=dir_name,
