@@ -7,12 +7,12 @@ data:
     dev: "./data/tmp/dev"
     test: "./data/tmp/test"
 
-    max_sent_length: 500 # Max Sentence Length
+    max_sent_length: 300 # Max Sentence Length
     skip_frames: 1   # Skip frames in the data, to reduce the data input size
     src_vocab: "./Configs/src_vocab.txt"
 
 training:
-    random_seed: 27   # Random seed for initialisation
+    random_seed: 30   # Random seed for initialisation
     optimizer: "adam"   # Chosen optimiser (adam, ..)
     learning_rate: 0.001   # Initial model learning rate
     learning_rate_min: 0.000001 # Learning rate minimum, when training will stop
@@ -47,21 +47,21 @@ model:
     future_prediction: 0 # Future Prediction Data Augmentation if > 0
     encoder:  # Model Encoder
         type: "transformer"
-        num_layers: 2 # Number of layers
+        num_layers: 6 # Number of layers
         num_heads: 4  # Number of Heads
         embeddings:
             embedding_dim: 512  # Embedding Dimension
             dropout: 0 # Embedding Dropout
         hidden_size: 512 # Hidden Size Dimension
         ff_size: 2048 # Feed-forward dimension (4 x hidden_size)
-        dropout: 0 # Encoder Dropout
+        dropout: 0.1 # Encoder Dropout
     decoder: # Model Decoder
         type: "transformer"
-        num_layers: 2 # Number of layers
+        num_layers: 6 # Number of layers
         num_heads: 4 # Number of Heads
         embeddings:
             embedding_dim: 512 # Embedding Dimension
             dropout: 0 # Embedding Dropout
         hidden_size: 512 # Hidden Size Dimension
         ff_size: 2048 # Feed-forward dimension (4 x hidden_size)
-        dropout: 0 # Decoder Dropout
+        dropout: 0.1 # Decoder Dropout

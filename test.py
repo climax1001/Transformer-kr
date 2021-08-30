@@ -11,11 +11,13 @@ train_path = '/home/juncislab/Downloads/bbinix/PHOENIX-2014-T-release-v3/PHOENIX
 tok_fun = lambda s: list(s) if "word" == "char" else s.split()
 
 
-f = open('/home/juncislab/PycharmProjects/0722skels/data/tmp/train.skels','r')
-for i in range(1, 10):
+f = open('/home/juncislab/PycharmProjects/0722skels/data/tmp/dev.skels','r')
+for i in range(0, 29):
     line = f.readline()
+    print(i)
     print("=========================")
     print(line)
+f.close()
 # paths = os.listdir(train_path)
 # for path in paths:
 #     file_path.write(path + '\n')

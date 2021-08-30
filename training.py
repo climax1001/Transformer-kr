@@ -219,7 +219,7 @@ class TrainManager:
 
         # Train and validate function
 
-    def train_and_validate(self, train_data: Dataset, valid_data: Dataset) \
+    def  train_and_validate(self, train_data: Dataset, valid_data: Dataset) \
             -> None:
         # Make training iterator
         train_iter = make_data_iter(train_data,
@@ -434,7 +434,11 @@ class TrainManager:
                 sequence_ID = None
 
             # Plot this sequences video
-            print(timing_hyp_seq.shape)
+            print("input : ", input)
+            print("gloss_label : ", gloss_label)
+            print("predict : " ,timing_hyp_seq.shape)
+            print("ref : ", ref_seq_count.shape)
+
             if "<" not in video_ext:
                 show_video(skel=timing_hyp_seq,
                            file_path=dir_name,
