@@ -313,6 +313,9 @@ class TrainManager:
                             batch_type=self.eval_batch_type,
                             type="val",
                         )
+                    print("valid_p : ", valid_file_paths)
+                    print("valid_H : ", len(valid_hypotheses))
+                    print("valid_R : ", len(valid_references))
 
                     val_step += 1
 
@@ -532,7 +535,7 @@ def train(cfg_file: str, ckpt=None) -> None:
 
     # Load the data - Trg as (batch, # of frames, joints + 1 )
     train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)
-
+    print('train_data : ', train_data)
     # Build the Progressive Transformer model
     model = build_model(cfg, src_vocab=src_vocab, trg_vocab=trg_vocab)
 

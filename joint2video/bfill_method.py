@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-path = '/home/juncislab/dataset/test'
+path = '/home/juncislab/dataset/train'
 file_list = os.listdir(path)
 
 for i, name in enumerate(file_list):

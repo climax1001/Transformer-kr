@@ -54,7 +54,7 @@ model:
             dropout: 0 # Embedding Dropout
         hidden_size: 512 # Hidden Size Dimension
         ff_size: 2048 # Feed-forward dimension (4 x hidden_size)
-        dropout: 0.1 # Encoder Dropout
+        dropout: 0 # Encoder Dropout
     decoder: # Model Decoder
         type: "transformer"
         num_layers: 6 # Number of layers
@@ -64,4 +64,4 @@ model:
             dropout: 0 # Embedding Dropout
         hidden_size: 512 # Hidden Size Dimension
         ff_size: 2048 # Feed-forward dimension (4 x hidden_size)
-        dropout: 0.1 # Decoder Dropout
+        dropout: 0 # Decoder Dropout

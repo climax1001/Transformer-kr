@@ -1,3 +1,4 @@
+import operator
 import os
 
 import cv2
@@ -42,14 +43,13 @@ def _2D_frame(filename):
     for seq, i in enumerate(tmp):
         if (i + 1) % 3 == 0:
            del_list.append(str(i))
-
+    print(del_list)
     skel_data = pd.read_csv(filename)
     skel_data = skel_data.drop(del_list, axis=1)
-
     return skel_data
 
 def monitor_video(filepath):
-    skel = _2D_frame(filepath)
+    skel = pd.read_csv(filepath)
 
     for i in range(len(skel)):
         img = np.zeros((210, 260, 3), np.uint8)
@@ -64,4 +64,25 @@ def monitor_video(filepath):
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    monitor_video('../data/01April_2010_Thursday_heute-6694.csv')
+    # folder_path = '/home/juncislab/PycharmProjects/0722skels/data/skel_dir_2'
+    # dir_list = os.listdir(folder_path)
+    # dic = {}
+    # new_skel_path = open('/home/juncislab/PycharmProjects/0722skels/data/tmp/new_train.skels', 'a')
+    #
+    # for i in range(len(dir_list)):
+    #     index = int(dir_list[i].split('.csv')[0].split('-')[1])
+    #     dic[dir_list[i]] = index
+    #
+    # sdic = sorted(dic.items(), key=operator.itemgetter(1))
+    # for i in range(len(sdic)):
+    #     print(sdic[i][0])
+    #     data = pd.read_csv(folder_path + '/' + sdic[i][0])
+    #     for row in range(len(data)):
+    #         csv_one_line = list(map(float,data.iloc[row]))
+    #         csv_one_line = list(np.round(csv_one_line, 6))
+    #         writable = ' '.join(map(str,csv_one_line))
+    #
+    #         new_skel_path.write(writable)
+    #     new_skel_path.write('\n')
+    # new_skel_path.close()
+    monitor_video('/home/juncislab/PycharmProjects/0722skels/data/skel_dir_2/11August_2010_Wednesday_tagesschau-1.csv')
