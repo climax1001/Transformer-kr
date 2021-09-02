@@ -64,25 +64,25 @@ def monitor_video(filepath):
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    # folder_path = '/home/juncislab/PycharmProjects/0722skels/data/skel_dir_2'
-    # dir_list = os.listdir(folder_path)
-    # dic = {}
-    # new_skel_path = open('/home/juncislab/PycharmProjects/0722skels/data/tmp/new_train.skels', 'a')
-    #
-    # for i in range(len(dir_list)):
-    #     index = int(dir_list[i].split('.csv')[0].split('-')[1])
-    #     dic[dir_list[i]] = index
-    #
-    # sdic = sorted(dic.items(), key=operator.itemgetter(1))
-    # for i in range(len(sdic)):
-    #     print(sdic[i][0])
-    #     data = pd.read_csv(folder_path + '/' + sdic[i][0])
-    #     for row in range(len(data)):
-    #         csv_one_line = list(map(float,data.iloc[row]))
-    #         csv_one_line = list(np.round(csv_one_line, 6))
-    #         writable = ' '.join(map(str,csv_one_line))
-    #
-    #         new_skel_path.write(writable)
-    #     new_skel_path.write('\n')
-    # new_skel_path.close()
-    monitor_video('/home/juncislab/PycharmProjects/0722skels/data/skel_dir_2/11August_2010_Wednesday_tagesschau-1.csv')
+    folder_path = '/home/juncislab/dataset/dev'
+    dir_list = os.listdir(folder_path)
+    dic = {}
+    new_skel_path = open('/data/tmp/dev.skels', 'a')
+
+    for i in range(len(dir_list)):
+        index = int(dir_list[i].split('.csv')[0].split('-')[1])
+        dic[dir_list[i]] = index
+
+    sdic = sorted(dic.items(), key=operator.itemgetter(1))
+    for i in range(len(sdic)):
+        print(sdic[i][0])
+        data = pd.read_csv(folder_path + '/' + sdic[i][0])
+        for row in range(len(data)):
+            csv_one_line = list(map(float,data.iloc[row]))
+            csv_one_line = list(np.round(csv_one_line, 6))
+            writable = ' '.join(map(str,csv_one_line))
+            new_skel_path.write(writable)
+            new_skel_path.write(' ')
+        new_skel_path.write('\n')
+    new_skel_path.close()
+    # monitor_video('/home/juncislab/PycharmProjects/0722skels/data/skel_dir_2/11August_2010_Wednesday_tagesschau-1.csv')

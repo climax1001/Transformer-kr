@@ -318,6 +318,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/data/skel_dir_2/01July_2009_Wednesday_tagesschau-4552.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/data/skel_dir_2/01June_2011_Wednesday_tagesschau-6945.csv">
           <value>
             <Attribute>
@@ -585,6 +592,48 @@
           </value>
         </entry>
         <entry key="/data/skel_dir_2/test1.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/train_skel_dir/01April_2010_Thursday_heute-6694.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/train_skel_dir/01April_2010_Thursday_heute-6696.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/train_skel_dir/01April_2010_Thursday_heute-6701.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/train_skel_dir/01April_2010_Thursday_tagesschau-4321.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/train_skel_dir/27January_2013_Sunday_tagesschau-8842.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/data/train_skel_dir/31May_2011_Tuesday_heute-1894.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

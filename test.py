@@ -7,7 +7,7 @@ from torchtext.legacy.data import TabularDataset
 import torch
 from joint2video.get_video import skels, draw_point, skel_connection
 
-f = open('/home/juncislab/PycharmProjects/0722skels/data/tmp/train.skels','r')
+f = open('/home/juncislab/PycharmProjects/0722skels/data/tmp/dev.skels','r')
 wanna_line = 1
 i = 0
 pose = []
@@ -18,8 +18,6 @@ while True:
         break
     if i == wanna_line:
         pose = line.replace('\n','').split(' ')
-
-    print(i)
 # # 마지막 공백 뺌
 pose.pop()
 f.close()
@@ -38,15 +36,19 @@ if __name__ == "__main__":
 
     point = np.reshape(pose,(-1,92))
     print(point.shape)
+    video_file = '/home/juncislab/gt_video/MORGEN_MAL_SONNE.mp4'
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    video = cv2.VideoWriter(video_file, fourcc, FPS, (260,210))
     for i in range(len(point)):
         img = np.zeros((210,260,3), np.uint8)
         get_one_line = point[i]
         my_list = skels(get_one_line)
-
+        print(my_list)
         mydict = draw_point(my_list, 210, 260)
         skel_connection(img, mydict)
 
-        cv2.imshow('img', img)
+        video.write(img)
+        # cv2.imshow('img', img)
         cv2.waitKey(0)
 
     cv2.destroyAllWindows()
