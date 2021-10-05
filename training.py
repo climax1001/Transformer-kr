@@ -398,7 +398,6 @@ class TrainManager:
 
     def produce_validation_video(self, output_joints, inputs, references, display, model_dir, type, steps="",
                                  file_paths=None):
-
         # If not at test
         if type != "test":
             dir_name = model_dir + "/videos/Step_{}/".format(steps)
@@ -428,25 +427,26 @@ class TrainManager:
 
             # Alter the dtw timing of the produced sequence, and collect the DTW score
             timing_hyp_seq, ref_seq_count, dtw_score = alter_DTW_timing(seq, ref_seq)
-
+            # print('timing_hyp_seq_1 : ', timing_hyp_seq.shape)
+            # video_ext = "{}_{}.mp4".format(gloss_label, "{0:.2f}".format(float(dtw_score)).replace(".", "_"))
             video_ext = "{}_{}.mp4".format(gloss_label, "{0:.2f}".format(float(dtw_score)).replace(".", "_"))
-
             if file_paths is not None:
                 sequence_ID = file_paths[i]
             else:
                 sequence_ID = None
-
             # Plot this sequences video
-            print("input : ", input)
-            print("gloss_label : ", gloss_label)
-            print("predict : " ,timing_hyp_seq.shape)
-            print("ref : ", ref_seq_count.shape)
+            # print("input : ", input)
+            # print("gloss_label : ", gloss_label)
+            # print("predict : " ,timing_hyp_seq.shape)
+            # print("ref : ", ref_seq_count.shape)
 
             if "<" not in video_ext:
+                #skel = seq.tolist()
                 show_video(skel=timing_hyp_seq,
                            file_path=dir_name,
                            video_name=video_ext,
-                           skip_frames=1)
+                           references = ref_seq_count,
+                           skip_frames=self.skip_frames)
                 # plot_video(joints=timing_hyp_seq,
                 #            file_path=dir_name,
                 #            video_name=video_ext,
@@ -531,7 +531,7 @@ def train(cfg_file: str, ckpt=None) -> None:
     cfg = load_config(cfg_file)
 
     # Set the random seed
-    set_seed(seed=cfg["training"].get("random_seed", 42))
+    set_seed(seed=cfg["training"].get("random_seed", 27))
 
     # Load the data - Trg as (batch, # of frames, joints + 1 )
     train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)

@@ -68,8 +68,6 @@ def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
 
     def tokenize_features(features):
 
-        # print(len(features))
-
         features = torch.as_tensor(features)
         ft_list = torch.split(features, 1, dim=0)
         return [ft.squeeze() for ft in ft_list]

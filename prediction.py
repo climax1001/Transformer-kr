@@ -86,8 +86,8 @@ def validate_on_data(model: Model,
             # print(output)
             # print(targets)
             # Add references, hypotheses and file paths to list
-            for i in range(len(targets)):
-                print("targets : " , targets[i])
+            # for i in range(len(targets)):
+            #     print("targets : " , targets[i])
             valid_references.extend(targets)
             valid_hypotheses.extend(output)
             file_paths.extend(batch.file_paths)

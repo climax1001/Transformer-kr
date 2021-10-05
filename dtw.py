@@ -28,6 +28,7 @@ def dtw(x, y, dist, warp=1, w=inf, s=1.0):
     r, c = len(x), len(y)
     if not isinf(w):
         D0 = full((r + 1, c + 1), inf)
+        print(D0)
         for i in range(1, r + 1):
             D0[i, max(1, i - w):min(c + 1, i + w + 1)] = 0
         D0[0, 0] = 0
@@ -40,6 +41,7 @@ def dtw(x, y, dist, warp=1, w=inf, s=1.0):
         for j in range(c):
             if (isinf(w) or (max(0, i - w) <= j <= min(c, i + w))):
                 D1[i, j] = dist(x[i], y[j])
+
     C = D1.copy()
     jrange = range(c)
     for i in range(r):
@@ -80,14 +82,14 @@ def _traceback(D):
 if __name__ == '__main__':
     w = inf
     s = 1.0
-    if 1:  # 1-D numeric
+    if 0:  # 1-D numeric
         from sklearn.metrics.pairwise import manhattan_distances
         x = [0, 0, 1, 1, 2, 4, 2, 1, 2, 0]
         y = [1, 1, 1, 2, 2, 2, 2, 3, 2, 0]
         dist_fun = manhattan_distances
         w = 1
         # s = 1.2
-    elif 0:  # 2-D numeric
+    elif 1: # 2-D numeric
         from sklearn.metrics.pairwise import euclidean_distances
         x = [[0, 0], [0, 1], [1, 1], [1, 2], [2, 2], [4, 3], [2, 3], [1, 1], [2, 2], [0, 1]]
         y = [[1, 0], [1, 1], [1, 1], [2, 1], [4, 3], [4, 3], [2, 3], [3, 1], [1, 2], [1, 0]]

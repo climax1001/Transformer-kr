@@ -7,9 +7,74 @@ import pandas as pd
 import torch
 import torch.nn as nn
 
-def skels(list_):
-    point_list = np.reshape(list_,(46,2))
-    return point_list
+def skeleton_array():
+    array = (
+        (0, 1),
+
+        (1, 2),
+        (2, 3),
+        (3, 4),
+
+        (1, 5),
+        (5, 6),
+        (6, 7),
+
+        (0, 15),
+        (0, 16),
+
+        (1, 8),
+
+        (25, 26),
+        (26, 27),
+        (27, 28),
+        (28, 29),
+
+        (25, 30),
+        (30, 31),
+        (31, 32),
+        (32, 33),
+
+        (25, 34),
+        (34, 35),
+        (35, 36),
+        (36, 37),
+
+        (25, 38),
+        (38, 39),
+        (39, 40),
+        (40, 41),
+
+        (25, 42),
+        (42, 43),
+        (43, 44),
+
+        (25 + 21, 26 + 21),
+        (26 + 21, 27 + 21),
+        (27 + 21, 28 + 21),
+        (28 + 21, 29 + 21),
+
+        (25 + 21, 30 + 21),
+        (30 + 21, 31 + 21),
+        (31 + 21, 32 + 21),
+        (32 + 21, 33 + 21),
+
+        (25 + 21, 34 + 21),
+        (34 + 21, 35 + 21),
+        (35 + 21, 36 + 21),
+        (36 + 21, 37 + 21),
+
+        (25 + 21, 38 + 21),
+        (38 + 21, 39 + 21),
+        (39 + 21, 40 + 21),
+        (40 + 21, 41 + 21),
+
+        (25 + 21, 42 + 21),
+        (42 + 21, 43 + 21),
+        (43 + 21, 44 + 21),
+
+    )
+
+    return array
 
 def draw_point(one_list, height, width):
     skel_dict = {}
@@ -51,25 +116,51 @@ def _2D_frame(filename):
 def show_video(skel,
                file_path,
                video_name,
-               skip_frames = 0.4):
+               references,
+               skip_frames = 1):
+
+    # 리스트 분할 함수
+    def list_chunk(lst, n):
+        return [lst[i:i + n] for i in range(0, len(lst), n)]
 
     # 비디오 파일 저장
-    print(skel.shape)
+    # timing_hyp_seq_1 : (85, 134)
     FPS = (25 // skip_frames)
     video_file = file_path + "/{}.mp4".format(video_name.split(".")[0])
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    video = cv2.VideoWriter(video_file, fourcc, FPS, (2048, 2048))
+    joints = skeleton_array()
+    print('skel : ',skel.shape)
+    print('ref : ', references.shape)
 
-    video = cv2.VideoWriter(video_file, fourcc, FPS, (260, 210))
-    # print(len(skel))
-    for i in range(len(skel)):
-        img = np.zeros((210, 260, 3), np.uint8)
-        get_one_line = skel[i]
-        my_list = skels(get_one_line)
+    for i, cordi in enumerate(skel):
+        one_frame_skel = skel[i]
+        one_frame_ref = references[i]
 
-        mydict = draw_point(my_list, 210, 260)
-        skel_connection(img, mydict)
+        img_pred = np.zeros((2048, 2048, 3), np.uint8)
+        img_ref = np.zeros((2048, 2048, 3), np.uint8)
 
-        video.write(img)
+        chunked_skel = list_chunk(one_frame_skel, 2)
+        chunked_ref = list_chunk(one_frame_ref, 2)
+        # print('chu_skel : ', chunked_skel.shape)
+        # print('chu_ref_skel : ', chunked_ref.shape)
+        for (x, y) in joints:
+            # print("X : ",chunked_skel[x].tolist(),"Y : ",type(chunked[y].tolist()))
+            ch_x, ch_y = chunked_skel[x].tolist(), chunked_skel[y].tolist()
+            ch_x = [int(i) for i in ch_x]
+            ch_y = [int(i) for i in ch_y]
+            img_pred = cv2.line(img_pred, ch_x, ch_y, (0, 125, 125), 5)
+
+            ch_ref_x, ch_ref_y = chunked_ref[x].tolist(), chunked_ref[y].tolist()
+            ch_ref_x = [int(i) for i in ch_ref_x]
+            ch_ref_y = [int(i) for i in ch_ref_y]
+            img_ref = cv2.line(img_ref, ch_ref_x, ch_ref_y, (125, 0, 125), 5)
+
+        img_pred = cv2.resize(img_pred, dsize = (1024, 1024))
+        # img_ref = cv2.resize(img_ref, dsize = (1024, 1024))
+
+        # img = cv2.hconcat([img_ref, img_pred])
+        video.write(img_pred)
         cv2.waitKey(0)
 
     cv2.destroyAllWindows()

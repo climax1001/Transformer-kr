@@ -7,8 +7,8 @@ from torchtext.legacy.data import TabularDataset
 import torch
 from joint2video.get_video import skels, draw_point, skel_connection
 
-f = open('/home/juncislab/PycharmProjects/0722skels/data/tmp/dev.skels','r')
-wanna_line = 1
+f = open('/home/juncislab/PycharmProjects/0722skels/data/tmp/test.skels','r')
+wanna_line = 16
 i = 0
 pose = []
 while True:
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     point = np.reshape(pose,(-1,92))
     print(point.shape)
-    video_file = '/home/juncislab/gt_video/MORGEN_MAL_SONNE.mp4'
+    video_file = '/home/juncislab/gt_video/NORD NACHT ANFANG ENORM SCHAUER GEWITTER DANN WOLKE VERSCHWINDEN.mp4'
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     video = cv2.VideoWriter(video_file, fourcc, FPS, (260,210))
     for i in range(len(point)):
@@ -52,8 +52,7 @@ if __name__ == "__main__":
         cv2.waitKey(0)
 
     cv2.destroyAllWindows()
-
-
+    video.release()
 # paths = os.listdir(train_path)
 # for path in paths:
 #     file_path.write(path + '\n')

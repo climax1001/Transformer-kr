@@ -285,19 +285,25 @@ def alter_DTW_timing(pred_seq,ref_seq):
 
     # Cut the reference down to the max count value
     _ , ref_max_idx = torch.max(ref_seq[:, -1], 0)
-    if ref_max_idx == 0: ref_max_idx += 1
+    print('ref_max_idx : ', ref_max_idx)
+    if ref_max_idx == 0:
+        ref_max_idx += 1
     # Cut down frames by counter
     ref_seq = ref_seq[:ref_max_idx,:].cpu().numpy()
 
     # Cut the hypothesis down to the max count value
     _, hyp_max_idx = torch.max(pred_seq[:, -1], 0)
-    if hyp_max_idx == 0: hyp_max_idx += 1
+    print('hyp_max_idx : ', hyp_max_idx)
+    if hyp_max_idx == 0:
+        hyp_max_idx += 1
     # Cut down frames by counter
     pred_seq = pred_seq[:hyp_max_idx,:].cpu().numpy()
 
+    print('ref_seq :' , ref_seq[:,:-1])
+    print('pred_seq :', pred_seq[:, :-1])
     # Run DTW on the reference and predicted sequence
     d, cost_matrix, acc_cost_matrix, path = dtw(ref_seq[:,:-1], pred_seq[:,:-1], dist=euclidean_norm)
-
+    print('path : ' , path)
     # Normalise the dtw cost by sequence length
     d = d / acc_cost_matrix.shape[0]
 
