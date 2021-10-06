@@ -420,10 +420,13 @@ class TrainManager:
             input = inputs[i]
             # Write gloss label
             gloss_label = input[0]
+            print(input)
             if input[1] is not "</s>":
                 gloss_label += "_" + input[1]
-            if input[2] is not "</s>":
-                gloss_label += "_" + input[2]
+
+            if len(input) > 2:
+                if input[2] is not "</s>":
+                    gloss_label += "_" + input[2]
 
             # Alter the dtw timing of the produced sequence, and collect the DTW score
             timing_hyp_seq, ref_seq_count, dtw_score = alter_DTW_timing(seq, ref_seq)
@@ -439,8 +442,10 @@ class TrainManager:
             # print("gloss_label : ", gloss_label)
             # print("predict : " ,timing_hyp_seq.shape)
             # print("ref : ", ref_seq_count.shape)
-
+            print("video_ext : ", video_ext)
+            video_ext = video_ext.replace('<',' ')
             if "<" not in video_ext:
+                print('blahblah')
                 #skel = seq.tolist()
                 show_video(skel=timing_hyp_seq,
                            file_path=dir_name,
