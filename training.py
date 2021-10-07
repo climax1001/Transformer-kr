@@ -442,10 +442,8 @@ class TrainManager:
             # print("gloss_label : ", gloss_label)
             # print("predict : " ,timing_hyp_seq.shape)
             # print("ref : ", ref_seq_count.shape)
-            print("video_ext : ", video_ext)
-            video_ext = video_ext.replace('<',' ')
+            video_ext = video_ext.replace('<','').replace('/','').replace('>','')
             if "<" not in video_ext:
-                print('blahblah')
                 #skel = seq.tolist()
                 show_video(skel=timing_hyp_seq,
                            file_path=dir_name,
@@ -592,6 +590,7 @@ def test(cfg_file,
 
     # To produce testing results
     data_to_predict = {"test": test_data}
+
     # To produce validation results
     # data_to_predict = {"dev": dev_data}
 
@@ -601,6 +600,7 @@ def test(cfg_file,
     # Build model and load parameters into it
     model = build_model(cfg, src_vocab=src_vocab, trg_vocab=trg_vocab)
     model.load_state_dict(model_checkpoint["model_state"])
+
     # If cuda, set model as cuda
     if use_cuda:
         model.cuda()
