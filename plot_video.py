@@ -223,7 +223,8 @@ def draw_frame_2D(frame, joints):
 
     # Increase the size and position of the joints
     joints = joints * 10 * 12 * 2
-    joints = joints + np.ones((50, 2)) * offset
+    joints = joints + np\
+        .ones((50, 2)) * offset
 
     # Loop through each of the bone structures, and plot the bone
     for j in range(number):

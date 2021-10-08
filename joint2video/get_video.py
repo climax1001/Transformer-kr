@@ -128,17 +128,16 @@ def show_video(skel,
     FPS = (25 // skip_frames)
     video_file = file_path + "{}.mp4".format(video_name.split(".")[0])
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video = cv2.VideoWriter(video_file, fourcc, FPS, (2048, 2048))
+    video = cv2.VideoWriter(video_file, fourcc, FPS, (2048, 1024))
+
     width, height = 1920, 1080
     joints = skeleton_array()
-    print(video_file)
-    print(references.shape)
     for i, cordi in enumerate(skel):
         one_frame_skel = skel[i]
         one_frame_ref = references[i]
 
-        img_pred = np.zeros((2048, 2048, 3), np.uint8)
-        img_ref = np.zeros((2048, 2048, 3), np.uint8)
+        img_pred = np.zeros((1080, 1920, 3), np.uint8)
+        img_ref = np.zeros((1080, 1920, 3), np.uint8)
 
         chunked_skel = list_chunk(one_frame_skel, 2)
         chunked_ref = list_chunk(one_frame_ref, 2)
@@ -152,16 +151,23 @@ def show_video(skel,
             ch_y = [int(ch_y[0] * width), int(ch_y[1] * height)]
             img_pred = cv2.line(img_pred, ch_x, ch_y, (0, 125, 125), 5)
 
-            # ch_ref_x, ch_ref_y = chunked_ref[x].tolist(), chunked_ref[y].tolist()
-            # ch_ref_x = [int(ch_ref_x[0] * width), int(ch_ref_x[1] * height)]
-            # ch_ref_y = [int(ch_ref_y[0] * width), int(ch_ref_y[1] * height)]
-            # img_ref_line = cv2.line(img_ref, ch_ref_x, ch_ref_y , (125, 0, 125), 5)
+            ch_ref_x, ch_ref_y = chunked_ref[x].tolist(), chunked_ref[y].tolist()
+            ch_ref_x = [int(ch_ref_x[0] * width), int(ch_ref_x[1] * height)]
+            ch_ref_y = [int(ch_ref_y[0] * width), int(ch_ref_y[1] * height)]
+            img_ref = cv2.line(img_ref, ch_ref_x, ch_ref_y , (125, 0, 125), 5)
 
-        # img = cv2.hconcat([img_ref_line, img_pred_line])
-        video.write(img_pred)
+        img_pred = cv2.resize(img_pred, dsize = (1024, 1024))
+        print('img_pred : ', img_pred.shape)
+        img_ref = cv2.resize(img_ref, dsize = (1024, 1024))
+        print('img_ref : ', img_ref.shape)
+
+        img = cv2.hconcat([img_ref, img_pred])
+        print('concated_img : ' , img.shape)
+        video.write(img)
         cv2.waitKey(0)
 
     cv2.destroyAllWindows()
+
 if __name__ == "__main__":
     # 파일 경로를 넣으면 골격을 뽑아준다.
     show_video('../data/01April_2010_Thursday_heute-6694.csv')
