@@ -117,12 +117,15 @@ def show_video(skel,
                file_path,
                video_name,
                references,
-               skip_frames = 1):
+               skip_frames = 1,
+               sequence = None):
 
     # 리스트 분할 함수
     def list_chunk(lst, n):
         return [lst[i:i + n] for i in range(0, len(lst), n)]
 
+    print("sequence ID : " , sequence)
+    print(len(skel))
     # 비디오 파일 저장
     # timing_hyp_seq_1 : (85, 134)
     FPS = (25 // skip_frames)
@@ -132,6 +135,7 @@ def show_video(skel,
 
     width, height = 1920, 1080
     joints = skeleton_array()
+
     for i, cordi in enumerate(skel):
         one_frame_skel = skel[i]
         one_frame_ref = references[i]
@@ -157,16 +161,66 @@ def show_video(skel,
             img_ref = cv2.line(img_ref, ch_ref_x, ch_ref_y , (125, 0, 125), 5)
 
         img_pred = cv2.resize(img_pred, dsize = (1024, 1024))
-        print('img_pred : ', img_pred.shape)
         img_ref = cv2.resize(img_ref, dsize = (1024, 1024))
-        print('img_ref : ', img_ref.shape)
 
         img = cv2.hconcat([img_ref, img_pred])
-        print('concated_img : ' , img.shape)
         video.write(img)
         cv2.waitKey(0)
 
-    cv2.destroyAllWindows()
+cv2.destroyAllWindows()
+
+    # DTW 적용 안하고 넣었을 때,
+    # if len(references) != len(skel):
+    #     for i, cordi in enumerate(skel):
+    #         one_frame_skel = skel[i]
+    #         img_pred = np.zeros((1024, 2048, 3), np.uint8)
+    #         chunked_skel = list_chunk(one_frame_skel, 2)
+    #         for (x, y) in joints:
+    #             # print("X : ",chunked_skel[x].tolist(),"Y : ",type(chunked_skel[y].tolist()))
+    #             # print("ch_x : ", int(ch_x[0] * width),int(ch_x[1] * height))
+    #             ch_x, ch_y = chunked_skel[x].tolist(), chunked_skel[y].tolist()
+    #             ch_x = [int(ch_x[0] * width), int(ch_x[1] * height)]
+    #             ch_y = [int(ch_y[0] * width), int(ch_y[1] * height)]
+    #             img_pred = cv2.line(img_pred, ch_x, ch_y, (0, 125, 125), 5)
+    #
+    #         # img_pred = cv2.resize(img_pred, dsize=(1024, 1024))
+    #
+    #         video.write(img_pred)
+    #         cv2.waitKey(0)
+
+    # else:
+    #     for i, cordi in enumerate(skel):
+    #         one_frame_skel = skel[i]
+    #         one_frame_ref = references[i]
+    #
+    #         img_pred = np.zeros((1080, 1920, 3), np.uint8)
+    #         img_ref = np.zeros((1080, 1920, 3), np.uint8)
+    #
+    #         chunked_skel = list_chunk(one_frame_skel, 2)
+    #         chunked_ref = list_chunk(one_frame_ref, 2)
+    #         # print('chu_skel : ', chunked_skel.shape)
+    #         # print('chu_ref_skel : ', chunked_ref.shape)
+    #         for (x, y) in joints:
+    #             # print("X : ",chunked_skel[x].tolist(),"Y : ",type(chunked_skel[y].tolist()))
+    #             # print("ch_x : ", int(ch_x[0] * width),int(ch_x[1] * height))
+    #             ch_x, ch_y = chunked_skel[x].tolist(), chunked_skel[y].tolist()
+    #             ch_x = [int(ch_x[0] * width), int(ch_x[1] * height)]
+    #             ch_y = [int(ch_y[0] * width), int(ch_y[1] * height)]
+    #             img_pred = cv2.line(img_pred, ch_x, ch_y, (0, 125, 125), 5)
+    #
+    #             ch_ref_x, ch_ref_y = chunked_ref[x].tolist(), chunked_ref[y].tolist()
+    #             ch_ref_x = [int(ch_ref_x[0] * width), int(ch_ref_x[1] * height)]
+    #             ch_ref_y = [int(ch_ref_y[0] * width), int(ch_ref_y[1] * height)]
+    #             img_ref = cv2.line(img_ref, ch_ref_x, ch_ref_y , (125, 0, 125), 5)
+    #
+    #         img_pred = cv2.resize(img_pred, dsize = (1024, 1024))
+    #         img_ref = cv2.resize(img_ref, dsize = (1024, 1024))
+    #
+    #         img = cv2.hconcat([img_ref, img_pred])
+    #         video.write(img)
+    #         cv2.waitKey(0)
+
+    # cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     # 파일 경로를 넣으면 골격을 뽑아준다.

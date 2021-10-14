@@ -313,9 +313,7 @@ class TrainManager:
                             batch_type=self.eval_batch_type,
                             type="val",
                         )
-                    print("valid_p : ", valid_file_paths)
-                    print("valid_H : ", len(valid_hypotheses))
-                    print("valid_R : ", len(valid_references))
+
 
                     val_step += 1
 
@@ -420,7 +418,6 @@ class TrainManager:
             input = inputs[i]
             # Write gloss label
             gloss_label = input[0]
-            print(input)
             if input[1] is not "</s>":
                 gloss_label += "_" + input[1]
 
@@ -449,7 +446,8 @@ class TrainManager:
                            file_path=dir_name,
                            video_name=video_ext,
                            references = ref_seq_count,
-                           skip_frames=self.skip_frames)
+                           skip_frames=self.skip_frames,
+                           sequence = sequence_ID)
                 # plot_video(joints=timing_hyp_seq,
                 #            file_path=dir_name,
                 #            video_name=video_ext,
@@ -560,6 +558,7 @@ def train(cfg_file: str, ckpt=None) -> None:
     # Train the model
     trainer.train_and_validate(train_data=train_data, valid_data=dev_data)
     print('check')
+
     # Test the model with the best checkpoint
     test(cfg_file)
 
@@ -581,7 +580,8 @@ def test(cfg_file,
 
     batch_size = cfg["training"].get("eval_batch_size", cfg["training"]["batch_size"])
     batch_type = cfg["training"].get("eval_batch_type", cfg["training"].get("batch_type", "sentence"))
-    use_cuda = cfg["training"].get("use_cuda", False)
+    use_cuda = cfg["training"].get("use_cuda", True)
+    torch.cuda.empty_cache()
     eval_metric = cfg["training"]["eval_metric"]
     max_output_length = cfg["training"].get("max_output_length", None)
 
